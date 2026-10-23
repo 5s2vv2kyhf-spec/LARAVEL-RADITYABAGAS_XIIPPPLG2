@@ -54,7 +54,7 @@
         
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('artikel') }}">
+                <a class="nav-link" href="{{ route('admin.artikel.index') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Artikel</span></a>
             </li>

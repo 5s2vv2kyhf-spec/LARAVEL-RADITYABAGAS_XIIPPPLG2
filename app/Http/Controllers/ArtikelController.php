@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ArtikelController extends Controller
 {
     public function index()
     {
-        $articles = DB::table('article')
-            ->select('id', 'judul', 'isi', 'tanggalterbit')
-            ->get();
+        $articles = Article::select('id', 'judul', 'isi', 'tanggalterbit')->get();
 
         return view('admin.artikel', compact('articles'));
     }
@@ -28,12 +26,10 @@ class ArtikelController extends Controller
             'isi'   => 'required|string',
         ]);
 
-        DB::table('article')->insert([
-            'judul'          => $request->input('judul'),
-            'isi'            => $request->input('isi'),
-            'tanggalterbit'  => now()->toDateString(),
-            'created_at'     => now(),
-            'updated_at'     => now(),
+        Article::create([
+            'judul'         => $request->input('judul'),
+            'isi'           => $request->input('isi'),
+            'tanggalterbit' => now()->toDateString(),
         ]);
 
         return redirect()->route('admin.artikel.index')
@@ -42,9 +38,7 @@ class ArtikelController extends Controller
 
     public function edit(int $id)
     {
-        $art = DB::table('article')->where('id', $id)->first();
-
-        abort_if(is_null($art), 404);
+        $art = Article::findOrFail($id);
 
         return view('admin.edit_artikel', compact('art'));
     }
@@ -56,10 +50,10 @@ class ArtikelController extends Controller
             'isi'   => 'required|string',
         ]);
 
-        DB::table('article')->where('id', $id)->update([
-            'judul'      => $request->input('judul'),
-            'isi'        => $request->input('isi'),
-            'updated_at' => now(),
+        $art = Article::findOrFail($id);
+        $art->update([
+            'judul' => $request->input('judul'),
+            'isi'   => $request->input('isi'),
         ]);
 
         return redirect()->route('admin.artikel.index')
@@ -68,7 +62,7 @@ class ArtikelController extends Controller
 
     public function destroy(int $id)
     {
-        DB::table('article')->where('id', $id)->delete();
+        Article::findOrFail($id)->delete();
 
         return redirect()->route('admin.artikel.index')
             ->with('success', 'Artikel berhasil dihapus.');
